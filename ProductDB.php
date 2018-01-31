@@ -35,9 +35,9 @@ class ProductDB {
     }
 
 
-    public function insert($name=''){
-        $stmt = $this->mysqli->prepare("INSERT INTO products(name) VALUES (?); ");
-        $stmt->bind_param('s', $name);
+    public function insert($name='', $description='', $price='', $stock=''){
+        $stmt = $this->mysqli->prepare("INSERT INTO products(name, description, price, stock) VALUES (?, ?, ?, ?); ");
+        $stmt->bind_param('ssss', $name, $description, $price, $stock);
         $r = $stmt->execute();
         $stmt->close();
         return $r;
@@ -53,10 +53,10 @@ class ProductDB {
     }
 
 
-	public function update($id, $newName) {
+	public function update($id, $newName, $newDescription, $newPrice, $newStock) {
         if($this->checkID($id)){
-            $stmt = $this->mysqli->prepare("UPDATE products SET name=? WHERE cod_product = ? ; ");
-            $stmt->bind_param('ss', $newName,$id);
+            $stmt = $this->mysqli->prepare("UPDATE products SET name=?, description=?, price=?, stock=? WHERE cod_product = ?;");
+            $stmt->bind_param('sssss', $newName, $newDescription, $newPrice, $newStock, $id);
             $r = $stmt->execute();
             $stmt->close();
             return $r;

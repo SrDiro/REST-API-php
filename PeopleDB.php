@@ -17,7 +17,7 @@ class PeopleDB {
     }
 
     public function getPeople($id=0){
-        $stmt = $this->mysqli->prepare("SELECT * FROM people WHERE id=? ; ");
+        $stmt = $this->mysqli->prepare("SELECT * FROM people WHERE id = ? ; ");
         $stmt->bind_param('s', $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -35,9 +35,9 @@ class PeopleDB {
     }
 
 
-    public function insert($name=''){
-        $stmt = $this->mysqli->prepare("INSERT INTO people(name) VALUES (?); ");
-        $stmt->bind_param('s', $name);
+    public function insert($id=0, $name=''){
+        $stmt = $this->mysqli->prepare("INSERT INTO people(id, name) VALUES (?, ?); ");
+        $stmt->bind_param('ss', $id, $name);
         $r = $stmt->execute();
         $stmt->close();
         return $r;
@@ -53,10 +53,10 @@ class PeopleDB {
     }
 
 
-	public function update($id, $newName) {
+	public function update($id=0, $newName='') {
         if($this->checkID($id)){
             $stmt = $this->mysqli->prepare("UPDATE people SET name=? WHERE id = ? ; ");
-            $stmt->bind_param('ss', $newName,$id);
+            $stmt->bind_param('ss', $newName, $id);
             $r = $stmt->execute();
             $stmt->close();
             return $r;
@@ -66,7 +66,7 @@ class PeopleDB {
 
 
 	public function checkID($id){
-        $stmt = $this->mysqli->prepare("SELECT * FROM people WHERE ID=?");
+        $stmt = $this->mysqli->prepare("SELECT * FROM people WHERE ID = ?");
         $stmt->bind_param("s", $id);
         if($stmt->execute()){
             $stmt->store_result();

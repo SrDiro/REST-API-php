@@ -1,6 +1,6 @@
 <?php
 require_once 'PeopleDB.php';
-require_once 'ProductsDB.php';
+require_once 'ProductDB.php';
 
 class DBTest_API {
 
@@ -23,7 +23,7 @@ class DBTest_API {
     }
 
 
-    function updatePeople() {
+    function updateRow() {
 		if( isset($_GET['action']) && isset($_GET['id']) ){
 			if($_GET['action']=='peoples'){
 				$obj = json_decode( file_get_contents('php://input') );
@@ -38,14 +38,14 @@ class DBTest_API {
 					$this->response(422,"error","The property is not defined");
 				}
 				exit;
-			} else if ($_GET['action']=='s'){
+			} else if ($_GET['action']=='products'){
 				$obj = json_decode( file_get_contents('php://input') );
 				$objArr = (array)$obj;
 				if (empty($objArr)){
 					$this->response(422,"error","Nothing to add. Check json");
-				}else if(isset($obj->name)){
+				}else if(isset($obj->name, $obj->description, $obj->price, $obj->stock)){
 					$db = new ProductDB();
-					$db->update($_GET['id'], $obj->name);
+					$db->update($_GET['id'], $obj->name, $obj->description, $obj->price, $obj->stock);
 					$this->response(200,"success","Record updated");
 				}else{
 					$this->response(422,"error","The property is not defined");
@@ -63,21 +63,23 @@ class DBTest_API {
 			$objArr = (array)$obj;
 			if (empty($objArr)){
 				$this->response(422,"error","Nothing to add. Check json");
-			}else if(isset($obj->name)){
+			}else if(isset($obj->id, $obj->name)){
 				$people = new PeopleDB();
-				$people->insert( $obj->name );
+				$people->insert( $obj->id, $obj->name );
 				$this->response(200,"success","new record added");
 			}else{
 				$this->response(422,"error","The property is not defined");
 			}
-		} else if($_GET['action']=='products'){
+		}
+     else if($_GET['action']=='products')
+    {
 			$obj = json_decode( file_get_contents('php://input') );
 			$objArr = (array)$obj;
 			if (empty($objArr)){
 				$this->response(422,"error","Nothing to add. Check json");
-			}else if(isset($obj->name)){
+			}else if(isset($obj->name, $obj->description, $obj->price, $obj->stock)){
 				$product = new ProductDB();
-				$product->insert( $obj->name );
+				$product->insert( $obj->name, $obj->description, $obj->price, $obj->stock );
 				$this->response(200,"success","new record added");
 			}else{
 				$this->response(422,"error","The property is not defined");
